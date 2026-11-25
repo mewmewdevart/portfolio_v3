@@ -1,10 +1,11 @@
 :root {
   color-scheme: dark;
 
-  --color-bg-primary: #b4f7a8;
-  --color-bg-dark: #140d1c;
-  --color-text-primary: #fff5ff;
+  --color-bg-primary: #F2EBFB;
+  --color-bg-dark: #0E0C16;
+  --color-text-primary: #0E0C16;
   --color-eye-sclera: #eac4c6;
+  --color-border-accent: #b444e6;
 
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
@@ -12,11 +13,15 @@
   --eye-left-rest-y: 1.04;
   --eye-right-rest-x: -1.04;
   --eye-right-rest-y: 0.96;
+
+  --portrait-max-by-height: calc((100svh - 24rem) / 0.88);
 }
 
 @theme {
   --breakpoint-3xl: 120rem;
   --color-surface: var(--color-bg-primary);
+  --color-ink: var(--color-text-primary);
   --color-sclera: var(--color-eye-sclera);
+  --color-accent: var(--color-border-accent);
   --font-sans: var(--font-sans);
 }

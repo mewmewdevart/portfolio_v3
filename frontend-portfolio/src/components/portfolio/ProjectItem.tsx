@@ -1,0 +1,46 @@
+import type { Project } from '../../config/portfolio'
+import { ArrowUpRightIcon } from '../icons/PortfolioIcons'
+import { TechTagList } from './TechTagList'
+
+type ProjectItemProps = {
+  project: Project
+}
+
+export function ProjectItem({ project }: ProjectItemProps) {
+  return (
+    <li className="transition-opacity">
+      <div className="group relative grid gap-4 pb-1 transition-all sm:grid-cols-8 sm:gap-8">
+        <div
+          aria-hidden="true"
+          className="absolute -inset-x-4 -inset-y-4 z-0 hidden rounded-md transition motion-reduce:transition-none lg:-inset-x-6 lg:block lg:group-hover:bg-accent/6"
+        />
+        <div className="z-10 sm:col-span-2 sm:pt-1">
+          <div className="flex aspect-video w-32 items-center justify-center rounded border-2 border-accent/35 bg-accent/10 text-sm font-bold uppercase tracking-widest text-accent transition group-hover:border-accent/70 sm:w-full">
+            {project.badge}
+          </div>
+        </div>
+        <div className="z-10 sm:col-span-6">
+          <h3 className="font-semibold leading-snug text-ink">
+            <a
+              href={project.url}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="group/link inline-flex items-baseline gap-1 text-ink transition-colors hover:text-accent focus-visible:text-accent"
+            >
+              <span className="absolute -inset-x-4 -inset-y-4 hidden rounded md:-inset-x-6 lg:block" />
+              <span>{project.title}</span>
+              <ArrowUpRightIcon className="inline-block size-4 shrink-0 translate-y-px transition-transform group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5 group-focus-visible/link:-translate-y-0.5 group-focus-visible/link:translate-x-0.5" />
+            </a>
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-ink/80">
+            {project.description}
+          </p>
+          <TechTagList
+            tags={project.tags}
+            label="Tecnologias do projeto"
+          />
+        </div>
+      </div>
+    </li>
+  )
+}

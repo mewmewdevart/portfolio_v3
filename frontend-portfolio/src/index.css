@@ -3,6 +3,10 @@
 @import "./styles/character-portrait.css";
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     margin: 0;
     font-family: var(--font-sans);
