@@ -4,22 +4,25 @@ import { useEyeTracking } from '../../hooks/useEyeTracking'
 
 type CharacterPortraitProps = {
   className?: string
+  flipped?: boolean
 }
 
-/**
- * Retrato ilustrado com rastreamento ocular suave via GSAP.
- */
-export function CharacterPortrait({ className = '' }: CharacterPortraitProps) {
+export function CharacterPortrait({
+  className = '',
+  flipped = false,
+}: CharacterPortraitProps) {
   const portraitRef = useRef<HTMLDivElement>(null)
   const irisRefs = useRef<(HTMLImageElement | null)[]>([])
 
-  useEyeTracking(portraitRef, irisRefs, CHARACTER_EYES)
+  useEyeTracking(portraitRef, irisRefs, CHARACTER_EYES, flipped)
 
   return (
     <div className={`self-center overflow-hidden ${className}`.trim()}>
       <div
         ref={portraitRef}
-        className="relative isolate w-full aspect-square pointer-events-none select-none"
+        className={`relative isolate w-full aspect-square pointer-events-none select-none ${
+          flipped ? '-scale-x-100' : ''
+        }`.trim()}
       >
         {CHARACTER_EYES.map((eye, index) => (
           <div

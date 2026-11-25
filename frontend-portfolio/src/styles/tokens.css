@@ -1,16 +1,13 @@
 :root {
   color-scheme: dark;
 
-  /* Cores e superfícies */
-  --color-bg-primary: #b4f7a8; /* alternativa escura: #140d1c */
+  --color-bg-primary: #b4f7a8;
   --color-bg-dark: #140d1c;
   --color-text-primary: #fff5ff;
   --color-eye-sclera: #eac4c6;
 
-  /* Tipografia */
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  /* Posicionamento de repouso das íris (% do canvas 1254 × 1254) */
   --eye-left-rest-x: -0.88;
   --eye-left-rest-y: 1.04;
   --eye-right-rest-x: -1.04;

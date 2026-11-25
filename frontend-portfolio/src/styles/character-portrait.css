@@ -1,10 +1,8 @@
 @layer components {
-  /* Os PNGs compartilham o mesmo canvas; os deslocamentos alinham a pupila ao recorte. */
   .eye-iris-rest {
     transform: translate(calc(var(--rest-x) * 1%), calc(var(--rest-y) * 1%));
   }
 
-  /* Contornos expandidos 2px sob o delineado opaco do retrato de 1254 × 1254. */
   .eye-clip-screen-left {
     --rest-x: var(--eye-left-rest-x);
     --rest-y: var(--eye-left-rest-y);

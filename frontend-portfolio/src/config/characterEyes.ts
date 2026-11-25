@@ -1,6 +1,6 @@
-import characterFaceImg from '../assets/images/character/character-face.png'
-import screenLeftIrisImg from '../assets/images/character/eye-iris-screen-left.png'
-import screenRightIrisImg from '../assets/images/character/eye-iris-screen-right.png'
+import characterFaceImg from '../assets/images/character/character-face.webp'
+import screenLeftIrisImg from '../assets/images/character/eye-iris-screen-left.webp'
+import screenRightIrisImg from '../assets/images/character/eye-iris-screen-right.webp'
 
 export type EyeConfig = {
   id: 'screen-left' | 'screen-right'

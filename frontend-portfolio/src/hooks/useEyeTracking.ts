@@ -2,19 +2,21 @@ import { useEffect, type RefObject } from 'react'
 import gsap from 'gsap'
 import { EYE_TRACKING_CONFIG, type EyeConfig } from '../config/characterEyes'
 
-/**
- * Conecta o rastreamento suave das íris via GSAP respeitando preferências de movimento.
- */
 export function useEyeTracking(
   portraitRef: RefObject<HTMLDivElement | null>,
   irisRefs: RefObject<(HTMLImageElement | null)[]>,
   eyes: EyeConfig[],
+  flipped = false,
 ) {
   useEffect(() => {
     const portrait = portraitRef.current
     if (!portrait) return
 
     const motion = gsap.matchMedia()
+    const effectiveAnchorX = flipped
+      ? 1 - EYE_TRACKING_CONFIG.anchorXRatio
+      : EYE_TRACKING_CONFIG.anchorXRatio
+    const xDirection = flipped ? -1 : 1
 
     motion.add(EYE_TRACKING_CONFIG.mediaQuery, () => {
       const easing: gsap.TweenVars = {
@@ -53,9 +55,9 @@ export function useEyeTracking(
         const bounds = portrait.getBoundingClientRect()
         if (!bounds.width || !bounds.height) return
 
-        const { anchorXRatio, anchorYRatio, radiusRatio } = EYE_TRACKING_CONFIG
+        const { anchorYRatio, radiusRatio } = EYE_TRACKING_CONFIG
         const dx =
-          (event.clientX - bounds.left - bounds.width * anchorXRatio) /
+          (event.clientX - bounds.left - bounds.width * effectiveAnchorX) /
           (bounds.width * radiusRatio)
         const dy =
           (event.clientY - bounds.top - bounds.height * anchorYRatio) /
@@ -65,7 +67,7 @@ export function useEyeTracking(
         const vertical = dy / distance
 
         for (const eye of trackedEyes) {
-          const offsetX = horizontal * eye.rangeX
+          const offsetX = horizontal * eye.rangeX * xDirection
           eye.moveX(eye.restX + offsetX)
           eye.moveY(eye.restY + vertical * eye.rangeY + offsetX * eye.slope)
         }
@@ -92,5 +94,5 @@ export function useEyeTracking(
     return () => {
       motion.revert()
     }
-  }, [portraitRef, irisRefs, eyes])
+  }, [portraitRef, irisRefs, eyes, flipped])
 }
