@@ -1,4 +1,5 @@
 import type { Project } from '../../config/portfolio'
+import { resolveProjectImage } from '../../utils/projectImages'
 import { ArrowUpRightIcon } from '../icons/PortfolioIcons'
 import { TypedText } from '../ui/TypedText'
 import { TechTagList } from './TechTagList'
@@ -8,22 +9,36 @@ type ProjectItemProps = {
 }
 
 export function ProjectItem({ project }: ProjectItemProps) {
+  const imageSrc = resolveProjectImage(project.imagePath)
+
   return (
     <li data-build="project-item" className="transition-opacity">
-      <div className="group relative grid gap-4 pb-1 transition-all sm:grid-cols-8 sm:gap-8">
+      <div className="group relative grid gap-4 pb-1 transition-all sm:grid-cols-8 sm:gap-6">
         <div
           aria-hidden="true"
           className="absolute -inset-x-4 -inset-y-4 z-0 hidden rounded-md transition motion-reduce:transition-none lg:-inset-x-6 lg:block lg:group-hover:bg-surface lg:group-hover:shadow-[inset_0_0_0_1px_var(--palette-border)]"
         />
-        <div className="z-10 sm:col-span-2 sm:pt-1">
+        <div className="z-10 sm:col-span-3 sm:pt-1">
           <div
             data-build="project-badge"
-            className="flex aspect-video w-32 items-center justify-center rounded border-2 border-line bg-surface-elevated text-sm font-bold uppercase tracking-widest text-accent-light transition-colors group-hover:border-accent sm:w-full"
+            className={`flex w-48 items-center justify-center overflow-hidden rounded border-2 border-line bg-surface-elevated text-sm font-bold uppercase tracking-widest text-accent-light transition-colors group-hover:border-accent sm:w-full ${
+              imageSrc ? '' : 'aspect-video'
+            }`.trim()}
           >
-            {project.badge}
+            {imageSrc ? (
+              <img
+                src={imageSrc}
+                alt={`Preview do projeto ${project.title}`}
+                loading="lazy"
+                decoding="async"
+                className="block h-auto w-full object-contain"
+              />
+            ) : (
+              project.badge
+            )}
           </div>
         </div>
-        <div className="z-10 sm:col-span-6">
+        <div className="z-10 sm:col-span-5">
           <h3 className="font-semibold leading-snug text-ink">
             <a
               href={project.url}
@@ -48,10 +63,7 @@ export function ProjectItem({ project }: ProjectItemProps) {
           >
             <TypedText text={project.description} group={`project-desc-${project.badge}`} />
           </p>
-          <TechTagList
-            tags={project.tags}
-            label="Tecnologias do projeto"
-          />
+          <TechTagList tags={project.tags} label="Tecnologias do projeto" />
         </div>
       </div>
     </li>

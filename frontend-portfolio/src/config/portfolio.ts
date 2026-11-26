@@ -13,6 +13,7 @@ export type Project = {
   description: string
   tags: string[]
   badge: string
+  imagePath?: string
 }
 
 export type SocialLink = {
@@ -81,12 +82,13 @@ export const EXPERIENCES: Experience[] = [
 
 export const PROJECTS: Project[] = [
   {
-    title: 'Lorem Ipsum Dolor',
-    url: 'https://github.com/mewmewdevart/portfolio_v3',
+    title: 'Mutirão - Dashboard',
+    url: 'https://github.com/mewmewdevart/CitizenTechFIAPChallenge',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet.',
-    tags: ['React', 'TypeScript', 'Tailwind CSS', 'GSAP'],
+      'Uma plataforma web colaborativa que conecta familiares e cuidadores para organizar rotinas, compartilhar responsabilidades e tornar o cuidado mais simples e humano. Global Solution 2026 · Citizen Tech · Web Design',
+    tags: ['HTML/CSS', 'Javascript', 'UX/UI Design'],
     badge: '01',
+    imagePath: './assets/images/printscreens/mutirao-printscreen.png',
   },
   {
     title: 'Consectetur Adipiscing',

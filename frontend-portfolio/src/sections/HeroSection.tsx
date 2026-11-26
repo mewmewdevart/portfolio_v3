@@ -22,6 +22,9 @@ import { useTheme } from '../hooks/useTheme'
 
 const SECTION_IDS: SectionId[] = NAV_ITEMS.map((item) => item.id)
 
+const MOBILE_STICKY_HEADING_CLASS =
+  'sticky top-[calc(var(--frame-inset-top)+var(--frame-border-width))] z-10 -ml-[calc(var(--frame-inset-left)+1.75rem)] -mr-[calc(var(--frame-inset-right)+1.75rem)] mb-4 bg-canvas/85 py-3.5 pl-[calc(var(--frame-inset-left)+1.75rem)] pr-[calc(var(--frame-inset-right)+6rem)] text-xs font-bold uppercase tracking-widest text-accent-light backdrop-blur-md sm:-ml-14 sm:-mr-20 sm:pl-14 sm:pr-24 md:-ml-20 md:-mr-24 md:pl-20 md:pr-28 lg:static lg:m-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none lg:sr-only'
+
 export function HeroSection() {
   const [activeSection, setActiveSection] = useActiveSection(SECTION_IDS)
   const { isDark, toggleTheme } = useTheme()
@@ -102,7 +105,7 @@ export function HeroSection() {
               <TypedText text={PROFILE.tagline} group="hero-tagline" />
             </p>
 
-            <nav aria-label="Navegação da página" className="mt-6 lg:mt-8">
+            <nav aria-label="Navegação da página" className="mt-6 hidden lg:mt-8 lg:block">
               <ul className="w-max space-y-0.5">
                 {NAV_ITEMS.map((item) => {
                   const isActive = activeSection === item.id
@@ -173,7 +176,7 @@ export function HeroSection() {
             <h2
               data-build="section-heading"
               aria-label="Sobre mim"
-              className="mb-4 text-xs font-bold uppercase tracking-widest text-accent-light lg:sr-only"
+              className={`${MOBILE_STICKY_HEADING_CLASS} lg:mb-4`}
             >
               <TypedText text="Sobre mim" group="about-heading" />
             </h2>
@@ -194,7 +197,7 @@ export function HeroSection() {
             <h2
               data-build="section-heading"
               aria-label="Experiencia"
-              className="mb-6 text-xs font-bold uppercase tracking-widest text-accent-light lg:sr-only"
+              className={`${MOBILE_STICKY_HEADING_CLASS} lg:mb-6`}
             >
               <TypedText text="Experiencia" group="experience-heading" />
             </h2>
@@ -226,7 +229,7 @@ export function HeroSection() {
             <h2
               data-build="section-heading"
               aria-label="Projetos"
-              className="mb-6 text-xs font-bold uppercase tracking-widest text-accent-light lg:sr-only"
+              className={`${MOBILE_STICKY_HEADING_CLASS} lg:mb-6`}
             >
               <TypedText text="Projetos" group="projects-heading" />
             </h2>

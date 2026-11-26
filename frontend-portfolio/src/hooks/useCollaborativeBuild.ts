@@ -252,6 +252,11 @@ export function useCollaborativeBuild(
               }
 
               sortReadingOrder(navItems.map((el) => ({ el }))).forEach(({ el: item }) => {
+                if (!isRendered(item)) {
+                  settle(item)
+                  markSettled(item)
+                  return
+                }
                 const line = one('[data-build="nav-line"]', item)
                 leftTasks.push({
                   el: item,
