@@ -16,6 +16,7 @@ export function ThemeToggle({
   return (
     <button
       type="button"
+      data-build="theme-toggle"
       onClick={onToggle}
       aria-pressed={isDark}
       aria-label={label}

@@ -7,10 +7,18 @@ export function useEyeTracking(
   irisRefs: RefObject<(HTMLImageElement | null)[]>,
   eyes: EyeConfig[],
   flipped = false,
+  reducedMotion = false,
 ) {
   useEffect(() => {
     const portrait = portraitRef.current
     if (!portrait) return
+
+    if (reducedMotion) {
+      irisRefs.current.forEach((iris) => {
+        if (iris) gsap.set(iris, { clearProps: 'transform' })
+      })
+      return
+    }
 
     const motion = gsap.matchMedia()
     const effectiveAnchorX = flipped
@@ -94,5 +102,5 @@ export function useEyeTracking(
     return () => {
       motion.revert()
     }
-  }, [portraitRef, irisRefs, eyes, flipped])
+  }, [portraitRef, irisRefs, eyes, flipped, reducedMotion])
 }

@@ -1,4 +1,5 @@
 import type { Experience } from '../../config/portfolio'
+import { TypedText } from '../ui/TypedText'
 import { TechTagList } from './TechTagList'
 
 type ExperienceItemProps = {
@@ -6,24 +7,36 @@ type ExperienceItemProps = {
 }
 
 export function ExperienceItem({ experience }: ExperienceItemProps) {
+  const titleText = `${experience.role} · ${experience.company}`
+
   return (
-    <li className="transition-opacity">
+    <li data-build="experience-item" className="transition-opacity">
       <div className="group relative grid gap-3 pb-1 transition-all sm:grid-cols-8 sm:gap-8">
         <div
           aria-hidden="true"
           className="absolute -inset-x-4 -inset-y-4 z-0 hidden rounded-md transition motion-reduce:transition-none lg:-inset-x-6 lg:block lg:group-hover:bg-surface lg:group-hover:shadow-[inset_0_0_0_1px_var(--palette-border)]"
         />
-        <header className="z-10 text-xs font-semibold uppercase tracking-wide text-ink-muted sm:col-span-2 sm:pt-1">
-          {experience.period}
+        <header
+          data-build="exp-period"
+          className="z-10 text-xs font-semibold uppercase tracking-wide text-ink-muted sm:col-span-2 sm:pt-1"
+        >
+          <TypedText
+            text={experience.period}
+            group={`exp-period-${experience.company}`}
+          />
         </header>
         <div className="z-10 sm:col-span-6">
-          <h3 className="font-semibold leading-snug text-ink">
-            <span>{experience.role}</span>
-            <span aria-hidden="true"> · </span>
-            <span>{experience.company}</span>
+          <h3 data-build="exp-title" className="font-semibold leading-snug text-ink">
+            <TypedText text={titleText} group={`exp-title-${experience.company}`} />
           </h3>
-          <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
-            {experience.description}
+          <p
+            data-build="exp-desc"
+            className="mt-2 text-sm leading-relaxed text-ink-secondary"
+          >
+            <TypedText
+              text={experience.description}
+              group={`exp-desc-${experience.company}`}
+            />
           </p>
           <TechTagList
             tags={experience.tags}

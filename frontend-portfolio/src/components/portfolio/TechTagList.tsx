@@ -8,7 +8,10 @@ export function TechTagList({ tags, label }: TechTagListProps) {
     <ul aria-label={label} className="mt-4 flex flex-wrap gap-2">
       {tags.map((tag) => (
         <li key={tag}>
-          <span className="inline-flex items-center rounded-sm bg-accent-soft px-3 py-1 text-xs font-medium text-accent-light">
+          <span
+            data-build="tech-tag"
+            className="inline-flex items-center rounded-sm bg-accent-soft px-3 py-1 text-xs font-medium text-accent-light"
+          >
             {tag}
           </span>
         </li>

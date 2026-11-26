@@ -5,19 +5,24 @@ import { useEyeTracking } from '../../hooks/useEyeTracking'
 type CharacterPortraitProps = {
   className?: string
   flipped?: boolean
+  reducedMotion?: boolean
 }
 
 export function CharacterPortrait({
   className = '',
   flipped = false,
+  reducedMotion = false,
 }: CharacterPortraitProps) {
   const portraitRef = useRef<HTMLDivElement>(null)
   const irisRefs = useRef<(HTMLImageElement | null)[]>([])
 
-  useEyeTracking(portraitRef, irisRefs, CHARACTER_EYES, flipped)
+  useEyeTracking(portraitRef, irisRefs, CHARACTER_EYES, flipped, reducedMotion)
 
   return (
-    <div className={`self-center overflow-hidden ${className}`.trim()}>
+    <div
+      data-build="portrait"
+      className={`self-center overflow-hidden ${className}`.trim()}
+    >
       <div
         ref={portraitRef}
         className={`relative isolate w-full aspect-square pointer-events-none select-none ${

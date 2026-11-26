@@ -56,6 +56,28 @@ export function MoonIcon({ className = 'size-4.5' }: IconProps) {
   )
 }
 
+export function MotionIcon({
+  reduced,
+  className = 'size-4.5',
+}: IconProps & { reduced: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+    >
+      <path d="M5 17c1.5-5 4.5-8 8-8 2.5 0 4.5 1.4 6 4" />
+      <circle cx="17" cy="15" r="2.5" />
+      {reduced && <path d="M4 4l16 16" />}
+    </svg>
+  )
+}
+
 export function SocialIcon({
   id,
   className = 'size-5',

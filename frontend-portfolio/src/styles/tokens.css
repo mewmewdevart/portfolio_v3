@@ -13,6 +13,8 @@
   --palette-accent-strong: #8f24c2;
   --palette-on-accent: #ffffff;
   --palette-eye-sclera: #eac4c6;
+  --palette-cursor-ai: #0284c7;
+  --palette-cursor-larissa: #bc46f0;
 
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
@@ -38,6 +40,8 @@
   --palette-accent-base: #bc46f0;
   --palette-accent-strong: #dc94fa;
   --palette-on-accent: #ffffff;
+  --palette-cursor-ai: #38bdf8;
+  --palette-cursor-larissa: #bc46f0;
 }
 
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
@@ -56,5 +60,7 @@
   --color-accent-light: var(--palette-accent-strong);
   --color-on-accent: var(--palette-on-accent);
   --color-sclera: var(--palette-eye-sclera);
+  --color-cursor-ai: var(--palette-cursor-ai);
+  --color-cursor-larissa: var(--palette-cursor-larissa);
   --font-sans: var(--font-sans);
 }
