@@ -30,4 +30,32 @@
     background-color: var(--palette-canvas);
     transition: background-color 200ms ease, color 200ms ease;
   }
+
+  [data-building='true'] {
+    cursor: not-allowed !important;
+  }
+
+  [data-building='true'] > * {
+    pointer-events: none !important;
+  }
+}
+
+@layer components {
+  .viewport-frame-inset {
+    position: fixed;
+    top: var(--frame-inset-top);
+    right: var(--frame-inset-right);
+    bottom: var(--frame-inset-bottom);
+    left: var(--frame-inset-left);
+  }
+
+  .viewport-frame-fill {
+    box-shadow: 0 0 0 100vmax var(--palette-canvas);
+  }
+
+  .viewport-frame-border {
+    border-width: var(--frame-border-width);
+    border-style: solid;
+    border-color: var(--palette-accent-base);
+  }
 }

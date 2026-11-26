@@ -21,6 +21,7 @@ export class VirtualCursor {
   private readonly pointerEl: HTMLElement | null
   private readonly crosshairEl: HTMLElement | null
   private readonly stiffness: number
+  private speed = 1
   private visible = false
   private ticking = false
 
@@ -72,6 +73,10 @@ export class VirtualCursor {
     if (this.crosshairEl) this.crosshairEl.style.opacity = mode === 'crosshair' ? '1' : '0'
   }
 
+  setSpeed(scale: number) {
+    this.speed = Math.max(1, scale)
+  }
+
   fadeOut(tl?: gsap.core.Timeline, at?: gsap.Position) {
     const vars: gsap.TweenVars = {
       autoAlpha: 0,
@@ -117,7 +122,7 @@ export class VirtualCursor {
 
   private tick = (_time: number, deltaMs: number) => {
     const dt = Math.min(deltaMs, 50) / 1000
-    const k = 1 - Math.exp(-dt * this.stiffness)
+    const k = 1 - Math.exp(-dt * this.stiffness * this.speed)
     this.current.x += (this.point.x - this.current.x) * k
     this.current.y += (this.point.y - this.current.y) * k
     this.apply()

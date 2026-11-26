@@ -1,7 +1,7 @@
-import { useLayoutEffect, type RefObject } from 'react'
+import { useLayoutEffect, useRef, type RefObject } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { Director, type Job } from '../animation/collab/director'
+import { Director, type Job, type JobHandle } from '../animation/collab/director'
 import { Marquee, VirtualCursor } from '../animation/collab/cursor'
 import {
   centerOf,
@@ -23,6 +23,7 @@ import {
 import type { CollaborativeCursorRefs } from '../components/ui/CollaborativeCursors'
 
 gsap.registerPlugin(ScrollTrigger)
+ScrollTrigger.config({ ignoreMobileResize: true })
 
 const isRendered = (el: Element | null): el is HTMLElement => {
   if (!el) return false
@@ -47,6 +48,8 @@ export function useCollaborativeBuild(
   reducedMotion = false,
 ) {
   const { aiCursorRef, larissaCursorRef, aiBoxRef, aiDimRef, larissaBoxRef } = cursorRefs
+  const introDoneRef = useRef(false)
+  const builtElsRef = useRef(new WeakSet<HTMLElement>())
 
   useLayoutEffect(() => {
     const root = rootRef.current
@@ -56,12 +59,25 @@ export function useCollaborativeBuild(
     const larBoxEl = larissaBoxRef.current
     if (!root || !aiEl || !larEl || !aiBoxEl || !larBoxEl) return
 
+    const builtEls = builtElsRef.current
+    const markSettled = (...els: Array<Element | null | undefined>) => {
+      for (const el of els) {
+        if (!el) continue
+        if (el instanceof HTMLElement) builtEls.add(el)
+        el.querySelectorAll<HTMLElement>('[data-build]').forEach((child) => {
+          builtEls.add(child)
+        })
+      }
+    }
+
     if (reducedMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      introDoneRef.current = true
       gsap.set([aiEl, larEl, aiBoxEl, larBoxEl], {
         autoAlpha: 0,
         clearProps: 'transform,width,height',
       })
       settle(root)
+      markSettled(root)
       return
     }
 
@@ -70,9 +86,15 @@ export function useCollaborativeBuild(
     let aiBox: Marquee | null = null
     let larBox: Marquee | null = null
 
-    const director = new Director(() => {
-      ai?.fadeOut()
-      lar?.fadeOut()
+    const director = new Director({
+      onIdle: () => {
+        ai?.fadeOut()
+        lar?.fadeOut()
+      },
+      onScaleChange: (scale) => {
+        ai?.setSpeed(scale)
+        lar?.setSpeed(scale)
+      },
     })
 
     const ctx = gsap.context(() => {
@@ -94,7 +116,6 @@ export function useCollaborativeBuild(
 
       const borderEl = one('[data-build="border"]')
       const portraitEl = one('[data-build="portrait"]')
-      const toggleEl = one('[data-build="theme-toggle"]')
       const headerEl = one('[data-build="header"]')
       const aboutSection = one('[data-build="about-section"]')
       const footerEl = one('[data-build="footer"]')
@@ -105,15 +126,38 @@ export function useCollaborativeBuild(
       const ctaLinks = all('[data-build="cta-link"]')
       const headings = all('[data-build="section-heading"]')
 
-      /* ----- estado inicial: tudo vazio antes da primeira pintura ----- */
-      hideChars(root)
-      gsap.set([borderEl, portraitEl, footerEl, ...ctaLinks].filter(Boolean), { autoAlpha: 0 })
-      if (toggleEl) gsap.set(toggleEl, { autoAlpha: 0, scale: 0.7 })
-      gsap.set(socialItems, { autoAlpha: 0, scale: 0.6 })
-      gsap.set(all('[data-build="nav-line"]'), { scaleX: 0, transformOrigin: 'left center' })
-      gsap.set(all('[data-build="tech-tag"]'), { autoAlpha: 0, scale: 0.8 })
-      gsap.set(all('[data-build="project-arrow"]'), { autoAlpha: 0, scale: 0.5 })
-      gsap.set(all('[data-build="project-badge"]'), { autoAlpha: 0 })
+      /* ----- estado inicial: oculta apenas o que ainda não foi construído ----- */
+      const hideIfUnbuilt = (el: HTMLElement | null) => {
+        if (!el || builtEls.has(el)) return
+        hideChars(el)
+        gsap.set(el, { autoAlpha: 0 })
+      }
+
+      if (!introDoneRef.current) {
+        hideChars(root)
+        gsap.set([borderEl, portraitEl, footerEl, ...ctaLinks].filter(Boolean), { autoAlpha: 0 })
+        gsap.set(socialItems, { autoAlpha: 0, scale: 0.6 })
+        gsap.set(all('[data-build="nav-line"]'), { scaleX: 0, transformOrigin: 'left center' })
+        gsap.set(all('[data-build="tech-tag"]'), { autoAlpha: 0, scale: 0.8 })
+        gsap.set(all('[data-build="project-arrow"]'), { autoAlpha: 0, scale: 0.5 })
+        gsap.set(all('[data-build="project-badge"]'), { autoAlpha: 0 })
+        ;[...experienceItems, ...projectItems, ...navItems, ...socialItems, ...ctaLinks].forEach(
+          (el) => {
+            el.dataset.building = 'true'
+          },
+        )
+      } else {
+        // Caso o usuário tenha desativado e reativado animações, garante estado limpo sem replay da abertura.
+        settle(borderEl, portraitEl, headerEl, aboutSection)
+        ;[...experienceItems, ...projectItems, ...ctaLinks].forEach((el) => {
+          if (builtEls.has(el)) settle(el)
+          else {
+            el.dataset.building = 'true'
+            hideIfUnbuilt(el)
+          }
+        })
+        if (footerEl && builtEls.has(footerEl)) settle(footerEl)
+      }
 
       const makeTagsTask = (tags: HTMLElement[]): CollabTask | null => {
         const tagsBox = tags[0]?.closest('ul') ?? null
@@ -130,11 +174,22 @@ export function useCollaborativeBuild(
 
       // Cada elemento é registrado uma vez: entra na fila quando o usuário o alcança.
       const register = (el: HTMLElement, job: Omit<Job, 'el'>) => {
+        if (builtEls.has(el)) {
+          settle(el)
+          return
+        }
         let fired = false
         const fire = () => {
-          if (fired) return
+          if (fired || builtEls.has(el)) return
           fired = true
-          director.enqueue({ el, ...job })
+          director.enqueue({
+            el,
+            ...job,
+            instant: () => {
+              job.instant()
+              markSettled(el)
+            },
+          })
         }
         if (el.getBoundingClientRect().top < window.innerHeight * 0.88) {
           fire()
@@ -151,13 +206,19 @@ export function useCollaborativeBuild(
       const portraitAboveFold =
         !!portraitRect && portraitRect.top < window.innerHeight * 0.98 && portraitRect.bottom > 0
 
-      director.enqueue({
-        el: null,
-        force: true,
-        instant: () => settle(borderEl, portraitEl, toggleEl, headerEl, aboutSection),
-        run: (done, getTimeScale) => {
+      if (!introDoneRef.current) {
+        director.enqueue({
+          el: null,
+          force: true,
+          instant: () => {
+            introDoneRef.current = true
+            settle(borderEl, portraitEl, headerEl, aboutSection)
+            markSettled(borderEl, portraitEl, headerEl, aboutSection)
+          },
+          run: (done, getTimeScale) => {
           let cancelled = false
-          let stopCollab: (() => void) | null = null
+          let collabHandle: JobHandle | null = null
+          let currentScale = getTimeScale()
 
           const borderTl = gsap.timeline({
             onComplete: () => {
@@ -226,17 +287,6 @@ export function useCollaborativeBuild(
                 })
               })
 
-              if (toggleEl) {
-                rightTasks.push({
-                  el: toggleEl,
-                  run: (tl, actor) => {
-                    actor.cursor.travel(tl, () => centerOf(toggleEl), 0.38)
-                    flash(tl, actor.marquee, () => layoutRect(toggleEl), 4, '>')
-                    popIn(tl, [toggleEl], { at: '<+0.08', duration: 0.35 })
-                  },
-                })
-              }
-
               const aboutHeading = aboutSection
                 ? one('[data-build="section-heading"]', aboutSection)
                 : null
@@ -286,11 +336,13 @@ export function useCollaborativeBuild(
               }
               stage2Tasks.push(...orderedContentTasks)
 
-              stopCollab = runCollabTasks(stage2Tasks, actors, {
+              collabHandle = runCollabTasks(stage2Tasks, actors, {
                 larDelay: portraitAboveFold ? 0.35 : 0,
-                getTimeScale,
+                getTimeScale: () => currentScale,
                 onDone: () => {
-                  settle(borderEl, portraitEl, toggleEl, headerEl, aboutSection)
+                  introDoneRef.current = true
+                  settle(borderEl, portraitEl, headerEl, aboutSection)
+                  markSettled(borderEl, portraitEl, headerEl, aboutSection)
                   done()
                 },
               })
@@ -306,20 +358,33 @@ export function useCollaborativeBuild(
               at: 0.2,
             })
           }
-          borderTl.timeScale(getTimeScale())
+          borderTl.timeScale(currentScale)
 
-          return () => {
-            cancelled = true
-            borderTl.kill()
-            stopCollab?.()
+          return {
+            setTimeScale: (scale) => {
+              currentScale = scale
+              borderTl.timeScale(scale)
+              collabHandle?.setTimeScale?.(scale)
+            },
+            kill: () => {
+              cancelled = true
+              borderTl.kill()
+              collabHandle?.kill()
+            },
           }
         },
-      })
+        })
+      }
+
+      const finishNode = (el: Element) => {
+        settle(el)
+        markSettled(el)
+      }
 
       // Mobile: a imagem fica abaixo da dobra -> IA a desenha quando o usuário chega nela.
       if (portraitEl && !portraitAboveFold) {
         register(portraitEl, {
-          instant: () => settle(portraitEl),
+          instant: () => finishNode(portraitEl),
           build: (tl) => {
             drawFrame(tl, {
               cursor: actors.ai.cursor,
@@ -327,7 +392,7 @@ export function useCollaborativeBuild(
               target: portraitEl,
               duration: 0.8,
             })
-            tl.add(() => settle(portraitEl))
+            tl.add(() => finishNode(portraitEl))
           },
         })
       }
@@ -337,21 +402,21 @@ export function useCollaborativeBuild(
       /* ================================================================ */
       const registerHeading = (heading: HTMLElement) => {
         if (!isRendered(heading)) {
-          settle(heading)
+          finishNode(heading)
           return
         }
         register(heading, {
-          instant: () => settle(heading),
+          instant: () => finishNode(heading),
           build: (tl) => {
             typeText(tl, actors.lar.cursor, heading, { cps: 45 })
-            tl.add(() => settle(heading))
+            tl.add(() => finishNode(heading))
           },
         })
       }
 
       const registerExperience = (item: HTMLElement) => {
         register(item, {
-          instant: () => settle(item),
+          instant: () => finishNode(item),
           run: (done, getTimeScale) => {
             const period = one('[data-build="exp-period"]', item)
             const title = one('[data-build="exp-title"]', item)
@@ -385,7 +450,7 @@ export function useCollaborativeBuild(
               larDelay: 0.1,
               getTimeScale,
               onDone: () => {
-                settle(item)
+                finishNode(item)
                 done()
               },
             })
@@ -395,7 +460,7 @@ export function useCollaborativeBuild(
 
       const registerProject = (item: HTMLElement) => {
         register(item, {
-          instant: () => settle(item),
+          instant: () => finishNode(item),
           run: (done, getTimeScale) => {
             const badge = one('[data-build="project-badge"]', item)
             const title = one('[data-build="project-title"]', item)
@@ -440,7 +505,7 @@ export function useCollaborativeBuild(
               larDelay: badge ? 0.2 : 0,
               getTimeScale,
               onDone: () => {
-                settle(item)
+                finishNode(item)
                 done()
               },
             })
@@ -450,7 +515,7 @@ export function useCollaborativeBuild(
 
       const registerCta = (link: HTMLElement) => {
         register(link, {
-          instant: () => settle(link),
+          instant: () => finishNode(link),
           build: (tl) => {
             actors.lar.cursor.travel(
               tl,
@@ -467,7 +532,7 @@ export function useCollaborativeBuild(
               { autoAlpha: 1, duration: 0.38, ease: 'power2.out', clearProps: 'opacity,visibility' },
               '<+0.05',
             )
-            tl.add(() => settle(link))
+            tl.add(() => finishNode(link))
           },
         })
       }
@@ -491,20 +556,29 @@ export function useCollaborativeBuild(
 
       if (footerEl) {
         register(footerEl, {
-          instant: () => settle(footerEl),
+          instant: () => finishNode(footerEl),
           build: (tl) => {
             tl.to(footerEl, {
               autoAlpha: 1,
               duration: 0.45,
               ease: 'power2.out',
               clearProps: 'opacity,visibility',
+              onComplete: () => finishNode(footerEl),
             })
           },
         })
       }
     }, root)
 
+    const blockUnbuiltClick = (event: MouseEvent) => {
+      if (event.target instanceof Element && event.target.closest('[data-building="true"]')) {
+        event.preventDefault()
+      }
+    }
+    root.addEventListener('click', blockUnbuiltClick, true)
+
     return () => {
+      root.removeEventListener('click', blockUnbuiltClick, true)
       director.dispose()
       ai?.dispose()
       lar?.dispose()

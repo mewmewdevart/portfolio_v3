@@ -1,5 +1,6 @@
 import gsap from 'gsap'
 import type { Marquee, VirtualCursor } from './cursor'
+import type { JobHandle } from './director'
 import { settle } from './primitives'
 
 export type CursorRole = 'ai' | 'lar'
@@ -54,12 +55,13 @@ export function runCollabTasks(
     getTimeScale?: () => number
     onDone: () => void
   },
-): () => void {
+): JobHandle {
   const states: Array<'pending' | 'active' | 'done'> = tasks.map(() => 'pending')
   const { larDelay = 0, aiDelay = 0, getTimeScale = () => 1, onDone } = options
 
   let disposed = false
   let completed = false
+  let currentScale = getTimeScale()
 
   const workers: Record<CursorRole, WorkerState> = {
     ai: { actor: actors.ai, busy: false, enabled: aiDelay <= 0, tl: null },
@@ -106,7 +108,7 @@ export function runCollabTasks(
 
     worker.tl = tl
     task.run(tl, worker.actor)
-    tl.timeScale(getTimeScale())
+    tl.timeScale(currentScale)
   }
 
   const pumpAll = () => {
@@ -117,29 +119,37 @@ export function runCollabTasks(
   }
 
   if (aiDelay > 0) {
-    delayedCalls.push(
-      gsap.delayedCall(aiDelay, () => {
-        workers.ai.enabled = true
-        pumpAll()
-      }),
-    )
+    const d = gsap.delayedCall(aiDelay, () => {
+      workers.ai.enabled = true
+      pumpAll()
+    })
+    d.timeScale(currentScale)
+    delayedCalls.push(d)
   }
 
   if (larDelay > 0) {
-    delayedCalls.push(
-      gsap.delayedCall(larDelay, () => {
-        workers.lar.enabled = true
-        pumpAll()
-      }),
-    )
+    const d = gsap.delayedCall(larDelay, () => {
+      workers.lar.enabled = true
+      pumpAll()
+    })
+    d.timeScale(currentScale)
+    delayedCalls.push(d)
   }
 
   pumpAll()
 
-  return () => {
-    disposed = true
-    delayedCalls.forEach((d) => d.kill())
-    workers.ai.tl?.kill()
-    workers.lar.tl?.kill()
+  return {
+    setTimeScale: (scale: number) => {
+      currentScale = scale
+      delayedCalls.forEach((d) => d.timeScale(scale))
+      workers.ai.tl?.timeScale(scale)
+      workers.lar.tl?.timeScale(scale)
+    },
+    kill: () => {
+      disposed = true
+      delayedCalls.forEach((d) => d.kill())
+      workers.ai.tl?.kill()
+      workers.lar.tl?.kill()
+    },
   }
 }

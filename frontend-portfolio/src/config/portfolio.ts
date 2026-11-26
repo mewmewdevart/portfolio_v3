@@ -23,8 +23,8 @@ export type SocialLink = {
 
 export const PROFILE = {
   name: 'Larissa C. Benedito',
-  role: 'Engenheira de Software FrontEnd',
-  tagline: 'Eu construo experiências web acessíveis e pixel-perfect.',
+  role: 'Lorem Ipsum Dolor Sit Amet',
+  tagline: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   resumeLabel: 'Ver currículo completo',
   resumeHref: '#experience',
   projectsArchiveLabel: 'Ver repositórios no GitHub',
@@ -62,15 +62,15 @@ export const ABOUT_PARAGRAPHS: string[] = [
 
 export const EXPERIENCES: Experience[] = [
   {
-    period: '2024 — Presente',
-    role: 'Middle FrontEnd Engineer',
-    company: 'F1rst Tecnologia',
+    period: '20XX — Presente',
+    role: 'Lorem Ipsum Dolor',
+    company: 'Consectetur Adipiscing',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas porttitor lectus ante, sit amet convallis ante pharetra ac. Mauris pretium purus id euismod interdum. Pellentesque tincidunt, diam eu laoreet lacinia, ex elit ultrices lorem, eu dignissim lacus urna eu ante.',
     tags: ['React', 'TypeScript', 'Tailwind CSS', 'JavaScript', 'CSS'],
   },
   {
-    period: '2022 — 2024',
+    period: '20XX — 20XX',
     role: 'Lorem Ipsum Engineer',
     company: 'Dolor Sit Amet',
     description:

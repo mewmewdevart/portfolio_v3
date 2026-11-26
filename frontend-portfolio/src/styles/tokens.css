@@ -24,6 +24,12 @@
   --eye-right-rest-y: 0.96;
 
   --portrait-max-by-height: calc((100svh - 24rem) / 0.88);
+
+  --frame-inset-top: calc(clamp(0.875rem, 2.8vmin, 2.25rem) + env(safe-area-inset-top, 0px));
+  --frame-inset-right: calc(clamp(0.875rem, 2.8vmin, 2.25rem) + env(safe-area-inset-right, 0px));
+  --frame-inset-bottom: calc(clamp(0.875rem, 2.8vmin, 2.25rem) + env(safe-area-inset-bottom, 0px));
+  --frame-inset-left: calc(clamp(0.875rem, 2.8vmin, 2.25rem) + env(safe-area-inset-left, 0px));
+  --frame-border-width: clamp(4px, 0.5vmin, 6px);
 }
 
 :root[data-theme='dark'] {

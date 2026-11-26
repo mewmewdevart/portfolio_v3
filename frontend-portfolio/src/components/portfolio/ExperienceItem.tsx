@@ -18,6 +18,7 @@ export function ExperienceItem({ experience }: ExperienceItemProps) {
         />
         <header
           data-build="exp-period"
+          aria-label={experience.period}
           className="z-10 text-xs font-semibold uppercase tracking-wide text-ink-muted sm:col-span-2 sm:pt-1"
         >
           <TypedText
@@ -26,11 +27,16 @@ export function ExperienceItem({ experience }: ExperienceItemProps) {
           />
         </header>
         <div className="z-10 sm:col-span-6">
-          <h3 data-build="exp-title" className="font-semibold leading-snug text-ink">
+          <h3
+            data-build="exp-title"
+            aria-label={titleText}
+            className="font-semibold leading-snug text-ink"
+          >
             <TypedText text={titleText} group={`exp-title-${experience.company}`} />
           </h3>
           <p
             data-build="exp-desc"
+            aria-label={experience.description}
             className="mt-2 text-sm leading-relaxed text-ink-secondary"
           >
             <TypedText

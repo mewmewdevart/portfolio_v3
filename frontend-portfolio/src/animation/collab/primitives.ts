@@ -3,7 +3,6 @@ import type { Marquee, Point, Rect, VirtualCursor } from './cursor'
 
 /** Elementos que o motor transforma (scale/y). Só neles `transform` é limpo ao final. */
 const TRANSFORMED = [
-  '[data-build="theme-toggle"]',
   '[data-build="social-item"]',
   '[data-build="nav-line"]',
   '[data-build="tech-tag"]',
@@ -58,6 +57,10 @@ export function hideChars(root: Element) {
 export function settle(...els: Array<Element | null | undefined>) {
   for (const el of els) {
     if (!el) continue
+    if (el instanceof HTMLElement) delete el.dataset.building
+    el.querySelectorAll<HTMLElement>('[data-building]').forEach((node) => {
+      delete node.dataset.building
+    })
     el.querySelectorAll<HTMLElement>('[data-typed-char]').forEach((c) => {
       c.style.removeProperty('opacity')
     })

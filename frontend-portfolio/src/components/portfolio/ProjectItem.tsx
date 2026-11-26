@@ -29,6 +29,7 @@ export function ProjectItem({ project }: ProjectItemProps) {
               href={project.url}
               target="_blank"
               rel="noreferrer noopener"
+              aria-label={project.title}
               className="group/link inline-flex items-baseline gap-1 text-ink transition-colors hover:text-accent-light focus-visible:text-accent-light"
             >
               <span className="absolute -inset-x-4 -inset-y-4 hidden rounded md:-inset-x-6 lg:block" />
@@ -42,6 +43,7 @@ export function ProjectItem({ project }: ProjectItemProps) {
           </h3>
           <p
             data-build="project-desc"
+            aria-label={project.description}
             className="mt-2 text-sm leading-relaxed text-ink-secondary"
           >
             <TypedText text={project.description} group={`project-desc-${project.badge}`} />
