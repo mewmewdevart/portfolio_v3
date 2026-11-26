@@ -11,9 +11,9 @@ export function ExperienceItem({ experience }: ExperienceItemProps) {
       <div className="group relative grid gap-3 pb-1 transition-all sm:grid-cols-8 sm:gap-8">
         <div
           aria-hidden="true"
-          className="absolute -inset-x-4 -inset-y-4 z-0 hidden rounded-md transition motion-reduce:transition-none lg:-inset-x-6 lg:block lg:group-hover:bg-accent/6"
+          className="absolute -inset-x-4 -inset-y-4 z-0 hidden rounded-md transition motion-reduce:transition-none lg:-inset-x-6 lg:block lg:group-hover:bg-surface lg:group-hover:shadow-[inset_0_0_0_1px_var(--palette-border)]"
         />
-        <header className="z-10 text-xs font-semibold uppercase tracking-wide text-ink/60 sm:col-span-2 sm:pt-1">
+        <header className="z-10 text-xs font-semibold uppercase tracking-wide text-ink-muted sm:col-span-2 sm:pt-1">
           {experience.period}
         </header>
         <div className="z-10 sm:col-span-6">
@@ -22,7 +22,7 @@ export function ExperienceItem({ experience }: ExperienceItemProps) {
             <span aria-hidden="true"> · </span>
             <span>{experience.company}</span>
           </h3>
-          <p className="mt-2 text-sm leading-relaxed text-ink/80">
+          <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
             {experience.description}
           </p>
           <TechTagList

@@ -1,11 +1,18 @@
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
-  --color-bg-primary: #F2EBFB;
-  --color-bg-dark: #0E0C16;
-  --color-text-primary: #0E0C16;
-  --color-eye-sclera: #eac4c6;
-  --color-border-accent: #b444e6;
+  --palette-canvas: #f3effa;
+  --palette-surface: #ffffff;
+  --palette-elevated: #eae2f7;
+  --palette-border: #d8cbef;
+  --palette-text-muted: #5c5370;
+  --palette-text-secondary: #3c3352;
+  --palette-text-primary: #0d0a14;
+  --palette-accent-soft: #efe2fa;
+  --palette-accent-base: #bc46f0;
+  --palette-accent-strong: #8f24c2;
+  --palette-on-accent: #ffffff;
+  --palette-eye-sclera: #eac4c6;
 
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
@@ -17,11 +24,37 @@
   --portrait-max-by-height: calc((100svh - 24rem) / 0.88);
 }
 
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --palette-canvas: #0d0a14;
+  --palette-surface: #171224;
+  --palette-elevated: #231c35;
+  --palette-border: #2e2545;
+  --palette-text-muted: #7d7394;
+  --palette-text-secondary: #b8afcb;
+  --palette-text-primary: #f3effa;
+  --palette-accent-soft: #2b0a3d;
+  --palette-accent-base: #bc46f0;
+  --palette-accent-strong: #dc94fa;
+  --palette-on-accent: #ffffff;
+}
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
 @theme {
   --breakpoint-3xl: 120rem;
-  --color-surface: var(--color-bg-primary);
-  --color-ink: var(--color-text-primary);
-  --color-sclera: var(--color-eye-sclera);
-  --color-accent: var(--color-border-accent);
+  --color-canvas: var(--palette-canvas);
+  --color-surface: var(--palette-surface);
+  --color-surface-elevated: var(--palette-elevated);
+  --color-line: var(--palette-border);
+  --color-ink: var(--palette-text-primary);
+  --color-ink-secondary: var(--palette-text-secondary);
+  --color-ink-muted: var(--palette-text-muted);
+  --color-accent: var(--palette-accent-base);
+  --color-accent-soft: var(--palette-accent-soft);
+  --color-accent-light: var(--palette-accent-strong);
+  --color-on-accent: var(--palette-on-accent);
+  --color-sclera: var(--palette-eye-sclera);
   --font-sans: var(--font-sans);
 }

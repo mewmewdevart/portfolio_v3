@@ -10,7 +10,8 @@
   body {
     margin: 0;
     font-family: var(--font-sans);
-    color: var(--color-text-primary);
-    background-color: var(--color-bg-primary);
+    color: var(--palette-text-primary);
+    background-color: var(--palette-canvas);
+    transition: background-color 200ms ease, color 200ms ease;
   }
 }
